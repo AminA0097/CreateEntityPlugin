@@ -11,6 +11,7 @@ public class Dialog extends DialogWrapper {
         super(true);
         init();
         setTitle("Creating Entity!");
+
     }
     @Nullable
     @Override
