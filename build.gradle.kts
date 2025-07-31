@@ -1,13 +1,17 @@
 plugins {
     id("java")
     id("org.jetbrains.intellij") version "1.17.3"
+    id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
 group = "com.frequence"
-version = "New"
+version = "1155"
 
 repositories {
     mavenCentral()
+}
+dependencies{
+    implementation("org.postgresql:postgresql:42.2.18")
 }
 
 // Configure Gradle IntelliJ Plugin

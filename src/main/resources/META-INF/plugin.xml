@@ -5,7 +5,16 @@
     <description><![CDATA[
         This plugin helps you quickly create Spring Entity classes from the project view context menu.
     ]]></description>
+    <change-notes>
+        <![CDATA[
+        <h3>What's New in 1155</h3>
+        <ul>
+<!--            <li>✨ New feature: Database connection test</li>-->
+            <li>🐞 Fixed bug when creating entities</li>
 
+        </ul>
+        ]]>
+    </change-notes>
     <actions>
         <action id="CreateEntity"
                 class="com.plugin.CreateEntity"
