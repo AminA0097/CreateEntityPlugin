@@ -1,0 +1,19 @@
+<idea-plugin>
+    <id>com.frequence.CreateEntity</id>
+    <name>Create Entity Utility</name>
+    <vendor email="contact@frequence.com" url="https://www.frequence.com">Frequence Team</vendor>
+    <description><![CDATA[
+        This plugin helps you quickly create Spring Entity classes from the project view context menu.
+    ]]></description>
+
+    <actions>
+        <action id="CreateEntity"
+                class="com.plugin.CreateEntity"
+                text="Create Entity"
+                description="Generate a Spring Entity class in the selected folder">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="first"/>
+        </action>
+    </actions>
+
+    <depends>com.intellij.modules.platform</depends>
+</idea-plugin>
