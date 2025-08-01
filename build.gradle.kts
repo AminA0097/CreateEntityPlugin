@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.frequence"
-version = "1155"
+version = "1146"
 
 repositories {
     mavenCentral()
