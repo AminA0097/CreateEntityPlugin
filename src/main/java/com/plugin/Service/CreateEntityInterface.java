@@ -19,4 +19,5 @@ public interface CreateEntityInterface {
                 .createNotification(title, content, type);
         notification.notify(project);
     };
+    public String createFiles(Project project,VirtualFile selectedFolder,String entityName,boolean isExtended);
 }

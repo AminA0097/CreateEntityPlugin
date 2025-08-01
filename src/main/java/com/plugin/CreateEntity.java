@@ -8,6 +8,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.plugin.Service.CreateEntityImpl;
 import com.plugin.Service.CreateEntityInterface;
+import com.plugin.Ui.CreateEntityUi;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.notification.*;
 
@@ -17,6 +18,7 @@ import static com.intellij.openapi.diff.impl.patch.formove.PatchApplier.showErro
 
 public class CreateEntity extends AnAction{
     private final CreateEntityInterface createEntityInterface = new CreateEntityImpl();
+
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
@@ -50,6 +52,23 @@ public class CreateEntity extends AnAction{
             return;
         }
         createEntityInterface.notify(project,"Error","Db Is Ready!",NotificationType.INFORMATION);
+        CreateEntityUi createEntityUi = new CreateEntityUi();
+        String entityName = "";
+        boolean isExtended = false;
+        if(createEntityUi.showAndGet()){
+            entityName = createEntityUi.getEntityName();
+            isExtended = createEntityUi.isInheritChecked();
+            if(entityName.isEmpty()){
+                createEntityInterface.notify(project,"Error","Fill EntityName",NotificationType.ERROR);
+            }
+
+        }
+        String file_res = createEntityInterface.createFiles(project,selectedFolder,entityName,isExtended);
+        if (!file_res.equals("Done!")) {
+            createEntityInterface.notify(project,"Error",res,NotificationType.ERROR);
+            return;
+        }
+        createEntityInterface.notify(project,"Error","Successfully Created!",NotificationType.INFORMATION);
     }
 
 

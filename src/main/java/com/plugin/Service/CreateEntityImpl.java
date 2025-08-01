@@ -1,5 +1,7 @@
 package com.plugin.Service;
 
+import com.github.weisj.jsvg.S;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.plugin.CreateEntity;
 
@@ -61,4 +63,19 @@ public class CreateEntityImpl implements CreateEntityInterface {
         }
     }
 
+    @Override
+    public String createFiles(Project project,
+                              VirtualFile selectedFolder,
+                              String entityName,
+                              boolean isExtended) {
+        StringBuilder tableName = new StringBuilder("FRE_");
+        for(int i = 0;i < entityName.length(); i++) {
+            char c = entityName.charAt(i);
+            if(Character.isUpperCase(c)) {
+                tableName.append("_");
+            }
+            tableName.append(Character.toUpperCase(c));
+        }
+        return "";
+    }
 }
