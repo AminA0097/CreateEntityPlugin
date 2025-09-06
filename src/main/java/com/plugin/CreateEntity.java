@@ -1,5 +1,6 @@
 package com.plugin;
 
+import com.google.common.util.concurrent.ServiceManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -13,13 +14,15 @@ import org.jetbrains.annotations.NotNull;
 import com.intellij.notification.*;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.intellij.openapi.diff.impl.patch.formove.PatchApplier.showError;
 
 public class CreateEntity extends AnAction{
-    private final CreateEntityInterface createEntityInterface = new CreateEntityImpl();
-
-
+    private final CreateEntityInterface createEntityInterface;
+    public CreateEntity() {
+        createEntityInterface = new CreateEntityImpl();
+    }
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = e.getProject();
@@ -27,50 +30,32 @@ public class CreateEntity extends AnAction{
 
         VirtualFile selectedFolder = e.getData(CommonDataKeys.VIRTUAL_FILE);
         if (selectedFolder == null || !selectedFolder.isDirectory()) {
-            createEntityInterface.notify(project,"Error","Folder Not Found!",NotificationType.ERROR);
+            createEntityInterface.notify(project, "Error", "Folder Not Found!", NotificationType.ERROR);
             return;
         }
 //        Find application.properties
-        VirtualFile resource = createEntityInterface.findFileRecursive(
-                project.getBaseDir().findFileByRelativePath("src/main/resources"),"application.properties");
-        if (resource == null) {
-            createEntityInterface.notify(project,"Error","application.properties!",NotificationType.ERROR);
+        VirtualFile dbFile = createEntityInterface.findFile(
+                project, "db.properties");
+        if (dbFile == null) {
+            createEntityInterface.notify(project, "DB Resource Error", "db.properties not found!", NotificationType.ERROR);
             return;
         }
 //        Get Db Properties
-        List<String> dbProperties = createEntityInterface.getDbParameters(resource);
-        if (dbProperties.size() < 3) {
-            createEntityInterface.notify(project,"Error","Failed To Find Db Parameters!",NotificationType.ERROR);
+        Map<String, String> params = createEntityInterface.getDbParameters(dbFile);
+        if (!params.containsKey("url") || !params.containsKey("user") || !params.containsKey("password")) {
+            createEntityInterface.notify(project, "DB Error", "Missing DB parameters in db.properties", NotificationType.ERROR);
+            return;
         }
 //        Check Connection
-        String res = createEntityInterface.testConnection(
-                dbProperties.get(0),
-                dbProperties.get(1),
-                dbProperties.get(2));
-        if (!res.equals("Done!")) {
-            createEntityInterface.notify(project,"Error",res,NotificationType.ERROR);
+        CreateEntityInterface.ConnectionResult res = createEntityInterface.testConnection(
+                params.get("url"),
+                params.get("user"),
+                params.get("password"));
+        if (!res.success()) {
+            createEntityInterface.notify(project, "DB Error", res.message(), NotificationType.ERROR);
             return;
         }
-        createEntityInterface.notify(project,"Error","Db Is Ready!",NotificationType.INFORMATION);
-        CreateEntityUi createEntityUi = new CreateEntityUi();
-        String entityName = "";
-        boolean isExtended = false;
-        if(createEntityUi.showAndGet()){
-            entityName = createEntityUi.getEntityName();
-            isExtended = createEntityUi.isInheritChecked();
-            if(entityName.isEmpty()){
-                createEntityInterface.notify(project,"Error","Fill EntityName",NotificationType.ERROR);
-            }
-
-        }
-        String file_res = createEntityInterface.createFiles(project,selectedFolder,entityName,isExtended);
-        if (!file_res.equals("Done!")) {
-            createEntityInterface.notify(project,"Error",res,NotificationType.ERROR);
-            return;
-        }
-        createEntityInterface.notify(project,"Error","Successfully Created!",NotificationType.INFORMATION);
+        createEntityInterface.notify(project, "Success", "Database connection successful!", NotificationType.INFORMATION);
     }
-
-
 
 }
